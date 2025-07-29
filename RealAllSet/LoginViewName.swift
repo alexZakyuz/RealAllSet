@@ -46,20 +46,24 @@ struct LoginViewName: View {
                         .cornerRadius(15)
                         .padding([.leading, .bottom, .trailing, .top])
                     
-                    NavigationLink {
+                    if name != "" {
                         
-                        LoginViewNewClasses()
+                        NavigationLink {
+                            
+                            ContentView()
+                            
+                        } label: {
+                            
+                            Text("Next")
+                                .padding()
+                                .foregroundColor(Color("vanilla"))
+                                .frame(width: 300, height: 50)
+                                .background(Color("lightgreen"))
+                                .cornerRadius(15)
+                            
+                        }//navlink
                         
-                    } label: {
-                        
-                        Text("Next")
-                            .padding()
-                            .foregroundColor(Color("vanilla"))
-                            .frame(width: 300, height: 50)
-                            .background(Color("lightgreen"))
-                            .cornerRadius(15)
-                        
-                    }//navlink
+                    }//if statement
                     
                 }//vstack
                 
