@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             ZStack{
-                Color(Color("vanilla"))
+                Color("vanilla")
                     .ignoresSafeArea()
                 
                 //hello+date
@@ -33,18 +33,20 @@ struct ContentView: View {
                 //bottom toolbar
                     HStack{
                         NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
-                            "🎓")
-                        .font(.largeTitle)
-                        }
-                        NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
-                            "🗓️")
-                        .font(.largeTitle)
-                        }
-                        NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
-                            "Create Class")
+                            "🎓 Class List")
                         .font(.largeTitle)
                         }
                         .buttonStyle(.borderedProminent)
+   
+                        
+                        NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
+                            "🗓️ Calendar")
+                        .font(.largeTitle)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+                     
+            
                         
                         
                     }//hstack
