@@ -16,6 +16,7 @@ struct ContentView: View {
             ZStack{
                 Color.vanilla
                     .ignoresSafeArea()
+                
                 //hello+date
                 VStack{
                     HStack(alignment: .bottom){
@@ -43,6 +44,7 @@ struct ContentView: View {
                             "Create Class")
                         .font(.largeTitle)
                         }
+                        .buttonStyle(.borderedProminent)
                         
                         
                     }//hstack
