@@ -28,13 +28,13 @@ struct ContentView: View {
                             .font(.title2)
                             .fontWeight(.semibold)
                     }//HStack
-                    .padding([.top, .leading, .trailing], 40)
+                    .padding([.top, .leading, .trailing], 30)
                     
                 //add to-do's +background
                     Spacer()
                 //bottom toolbar
                     HStack{
-                        NavigationLink { ClassHome()} label: {Text(
+                        NavigationLink {ClassHome()} label: {Text(
                             "🎓 Class List")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -47,7 +47,7 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        NavigationLink{ /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/} label: {Text(
+                        NavigationLink{Calendar()} label: {Text(
                             "🗓️ Calendar")
                         .font(.title2)
                         .fontWeight(.semibold)
@@ -57,8 +57,22 @@ struct ContentView: View {
                             .foregroundColor(Color("lightgreen"))
                             .cornerRadius(5))
                         }
+                        
+                        Spacer()
+                        
+                        NavigationLink{Help()} label: {Text(
+                            "ⓘ")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .background(Rectangle()
+                            .frame(width: 50.0, height: 50.0)
+                            .foregroundColor(Color("lightgreen"))
+                            .cornerRadius(5))
+                        }
                     }//hstack
-                    .padding(50)
+                    .padding(30)
+               
                     
                 }//VStack
             }//Zstack
