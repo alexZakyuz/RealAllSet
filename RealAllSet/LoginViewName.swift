@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LoginViewName: View {
     
-    @Binding var name : String
+    @State private var name = ""
     
     var body: some View {
         
@@ -45,7 +46,7 @@ struct LoginViewName: View {
                         .background(.black.opacity(0.05))
                         .cornerRadius(15)
                         .padding([.leading, .bottom, .trailing, .top])
-                    
+                                        
                     if name != "" {
                         
                         NavigationLink {
@@ -78,7 +79,6 @@ struct LoginViewName: View {
 
 #Preview {
     
-    @Previewable @State var name = ""
-    LoginViewName(name: $name)
+    LoginViewName()
     
 }//preview

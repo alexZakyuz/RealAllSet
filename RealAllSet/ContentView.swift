@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var name = ""
+    @State var name = ""
     let currentDate = Date()
     
     var body: some View {
