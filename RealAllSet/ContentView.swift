@@ -22,34 +22,44 @@ struct ContentView: View {
                     HStack(alignment: .bottom){
                         Text("Hello, \(name)")
                             .font(.title)
+                            .fontWeight(.bold)
                         Spacer()
                         Text(currentDate, style: .date)
                             .font(.title2)
+                            .fontWeight(.semibold)
                     }//HStack
-                    .padding(.horizontal, 40)
+                    .padding([.top, .leading, .trailing], 40)
                     
                 //add to-do's +background
                     Spacer()
                 //bottom toolbar
                     HStack{
-                        NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
+                        NavigationLink { ClassHome()} label: {Text(
                             "🎓 Class List")
-                        .font(.largeTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .background(Rectangle()
+                            .frame(width: 150, height: 50.0)
+                            .foregroundColor(Color("lightgreen"))
+                            .cornerRadius(5))
                         }
-                        .buttonStyle(.borderedProminent)
-   
                         
-                        NavigationLink(destination: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/) {Text(
+                        Spacer()
+                        
+                        NavigationLink{ /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Destination@*/Text("Destination")/*@END_MENU_TOKEN@*/} label: {Text(
                             "🗓️ Calendar")
-                        .font(.largeTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .background(Rectangle()
+                            .frame(width: 150, height: 50.0)
+                            .foregroundColor(Color("lightgreen"))
+                            .cornerRadius(5))
                         }
-                        .buttonStyle(.borderedProminent)
-                        
-                     
-            
-                        
-                        
                     }//hstack
+                    .padding(50)
+                    
                 }//VStack
             }//Zstack
         }//navigationstack
