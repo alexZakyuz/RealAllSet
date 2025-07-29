@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
         NavigationStack{
             ZStack{
-                Color.vanilla
+                Color(Color("vanilla"))
                     .ignoresSafeArea()
                 //hello+date
                 VStack{

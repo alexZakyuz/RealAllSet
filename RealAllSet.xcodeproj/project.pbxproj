@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BD6DCCBF2E3961A200F5DD9E /* ClassHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD6DCCBE2E3961A200F5DD9E /* ClassHome.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		BD186EDB2E395C9C00E470E3 /* RealAllSet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RealAllSet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD6DCCBE2E3961A200F5DD9E /* ClassHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassHome.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +37,7 @@
 		BD186ED22E395C9C00E470E3 = {
 			isa = PBXGroup;
 			children = (
+				BD6DCCBE2E3961A200F5DD9E /* ClassHome.swift */,
 				BD186EDD2E395C9C00E470E3 /* RealAllSet */,
 				BD186EDC2E395C9C00E470E3 /* Products */,
 			);
@@ -119,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD6DCCBF2E3961A200F5DD9E /* ClassHome.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
