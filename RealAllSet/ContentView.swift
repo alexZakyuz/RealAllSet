@@ -23,7 +23,7 @@ struct ContentView: View {
                 //hello+date
                 VStack{
                     HStack(alignment: .bottom){
-                        Text("Hello, \(name)")
+                        Text("Hello, ")
                             .font(.title)
                             .fontWeight(.bold)
                         Spacer()
