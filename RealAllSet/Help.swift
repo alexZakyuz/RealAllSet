@@ -12,7 +12,12 @@ struct Help: View {
         ZStack{
             Color("vanilla")
                 .ignoresSafeArea()
-            Text("THIS IS THE HELP PAGE")
+            VStack {
+                Text("Guides and Tips")
+                    .background(Rectangle() .foregroundColor(.white))
+                
+            }
+        
         }
     }//body
 }//struct
