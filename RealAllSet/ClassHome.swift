@@ -12,8 +12,12 @@ struct ClassModel: Identifiable, Hashable {
 }
 
 struct ClassHome: View {
+    @State var showInput = false
+    @State var className = " "
+    
+    
     // Sample classes
-    let classes = ["English", "Algebra", "History", "Band", "PE"]
+    @State var classes = ["English", "Algebra", "History", "Band", "PE"]
     
     // Date formatter
     var formattedDate: String {
@@ -57,9 +61,9 @@ struct ClassHome: View {
                     
                     Spacer()
                     
-                    // Create Class button -> Navigates to NewClass
-                    NavigationLink(destination: NewClass()) {
-                        Text("Create Class")
+                    // Create Class button, creates new class and adds it to list
+                    Button(action: {showInput.toggle()}) {
+                        Text(showInput ? "Cancel" : "Create Class")
                             .fontWeight(.semibold)
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -69,6 +73,30 @@ struct ClassHome: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
+                    
+                    if showInput {
+                        VStack(spacing: 10){
+                            TextField("Enter class name...", text: $className)
+                                .foregroundStyle(.black)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .padding(.horizontal)
+                            Button("Submit (Enter class name ↑)"){if !className.isEmpty{
+                                classes.append(className)
+                                className = " "
+                                showInput = false}
+                            }
+                            .fontWeight(.semibold)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                            .foregroundColor(.black)
+                            .cornerRadius(20)
+                            .padding()
+                            .cornerRadius(8)
+
+                        }
+                    }
+                    
                 }
                 .padding(.top)
             }
