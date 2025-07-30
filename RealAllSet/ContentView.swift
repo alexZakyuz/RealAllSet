@@ -37,45 +37,70 @@ struct ContentView: View {
                 //add to-do's +background
                     Spacer()
                 //bottom toolbar
-                    HStack{
-                        NavigationLink {ClassHome()} label: {Text(
-                            "🎓 Class List")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                        .background(Rectangle()
-                            .frame(width: 150, height: 50.0)
-                            .foregroundColor(Color("lightgreen"))
-                            .cornerRadius(5))
+                    HStack(spacing: 12) {
+                        NavigationLink {
+                            ClassHome()
+                        } label: {
+                            Text("🎓 Class List")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .padding(.horizontal, 10)
+                                .frame(height: 50)
+                                .frame(maxWidth: .infinity)  // flexible width
+                                .background(Color("lightgreen"))
+                                .cornerRadius(8)
                         }
                         
-                        Spacer()
-                        
-                        NavigationLink{CalendarView()} label: {Text(
-                            "🗓️ Calendar")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                        .background(Rectangle()
-                            .frame(width: 150, height: 50.0)
-                            .foregroundColor(Color("lightgreen"))
-                            .cornerRadius(5))
+                        NavigationLink {
+                            CalendarView()
+                        } label: {
+                            Text("🗓️ Calendar")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .padding(.horizontal, 10)
+                                .frame(height: 50)
+                                .frame(maxWidth: .infinity)  // flexible width
+                                .background(Color("lightgreen"))
+                                .cornerRadius(8)
                         }
                         
-                        Spacer()
-                        
-                        NavigationLink{Help()} label: {Text(
-                            "ⓘ")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.black)
-                        .background(Rectangle()
-                            .frame(width: 50.0, height: 50.0)
-                            .foregroundColor(Color("lightgreen"))
-                            .cornerRadius(5))
+                        NavigationLink {
+                            Help()
+                        } label: {
+                            Text("ⓘ")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .frame(width: 50, height: 50)
+                                .background(Color("lightgreen"))
+                                .cornerRadius(8)
                         }
-                    }//hstack
-                    .padding(30)
+                        
+                        NavigationLink {
+                            VolunteerLogView()
+                        } label: {
+                            Text("Log")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(width: 50, height: 50)
+                                .background(Color("darkbluepurple"))
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+
+
+
+                        
+                        
+                    
                
                     
                 }//VStack
