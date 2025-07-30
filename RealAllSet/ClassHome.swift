@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import SwiftData
+
+
 
 struct Todo: Identifiable {
     let id = UUID()
@@ -89,7 +92,7 @@ struct TodoListModalView: View {
                 .padding()
                 
                 List {
-                    ForEach($todos) { $todo in
+                    ForEach($todos) {$todo in
                         HStack {
                             Button(action: {
                                 todo.isDone.toggle()
