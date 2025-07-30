@@ -11,8 +11,8 @@ import SwiftData
 struct ContentView: View {
     //@State var name = ""
     let currentDate = Date()
-    @Query private var newName: [NewName]
-    @Environment(\.modelContext) private var context
+    //@Query private var newName: [NewName]
+    //@Environment(\.modelContext) private var context
     
     var body: some View {
         NavigationStack{
@@ -86,5 +86,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: NewName.self, inMemory:true)
+    //    .modelContainer(for: NewName.self, inMemory:true)
 }
