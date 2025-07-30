@@ -9,8 +9,10 @@ import SwiftUI
 
 struct CalendarView: View {
     @State private var selectedDate: Date? = nil
-    @State private var notes: [Date: String] = [:]
+    @State private var notes: [String: String] = [:] // key: "yyyy-MM-dd"
     @State private var currentMonth: Date = Date()
+    @State private var showAlert = false
+    @State private var alertMessage = ""
 
     private var daysInMonth: [Date] {
         generateCalendar(for: currentMonth)
@@ -19,6 +21,12 @@ struct CalendarView: View {
     private var monthYearFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "LLLL yyyy"
+        return formatter
+    }
+
+    private var dateKeyFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }
 
@@ -60,15 +68,35 @@ struct CalendarView: View {
                     }
 
                     ForEach(daysInMonth, id: \.self) { date in
+                        let key = dateKeyFormatter.string(from: date)
+                        let hasNote = notes[key, default: ""].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+
                         Button(action: {
                             selectedDate = date
+                            if hasNote {
+                                alertMessage = "Note for this day:\n\n\(notes[key]!)"
+                                showAlert = true
+                            }
                         }) {
-                            Text("\(Calendar.current.component(.day, from: date))")
-                                .frame(width: 30, height: 30)
-                                .background(
-                                    selectedDate == date ? Color.blue.opacity(0.3) : Color.clear
-                                )
-                                .clipShape(Circle())
+                            VStack(spacing: 4) {
+                                Text("\(Calendar.current.component(.day, from: date))")
+                                    .frame(width: 30, height: 30)
+                                    .background(
+                                        selectedDate == date ? Color.purple.opacity(0.3) : Color.clear
+                                    )
+                                    .clipShape(Circle())
+
+                                if hasNote {
+                                    Circle()
+                                        .fill(Color.purple)
+                                        .frame(width: 6, height: 6)
+                                } else {
+                                    Circle()
+                                        .fill(Color.clear)
+                                        .frame(width: 6, height: 6)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         .disabled(!Calendar.current.isDate(date, equalTo: currentMonth, toGranularity: .month))
                     }
@@ -76,17 +104,22 @@ struct CalendarView: View {
                 .padding()
 
                 if let selected = selectedDate {
+                    let key = dateKeyFormatter.string(from: selected)
+
                     VStack(alignment: .leading) {
                         Text("Notes for \(selected.formatted(date: .long, time: .omitted))")
                             .font(.headline)
 
                         TextEditor(text: Binding(
-                            get: { notes[selected, default: ""] },
-                            set: { notes[selected] = $0 }
+                            get: { notes[key, default: ""] },
+                            set: {
+                                notes[key] = $0
+                                saveNotes()
+                            }
                         ))
                         .frame(height: 150)
                         .padding()
-                        .background(Color.white)
+                        .background(Color("darkgreen"))
                         .cornerRadius(10)
                         .shadow(radius: 2)
                     }
@@ -96,6 +129,14 @@ struct CalendarView: View {
                 Spacer()
             }
             .padding(.top)
+            .onAppear {
+                loadNotes()
+            }
+            .alert("Note", isPresented: $showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(alertMessage)
+            }
         }
     }
 
@@ -125,13 +166,19 @@ struct CalendarView: View {
             currentMonth = newDate
         }
     }
+
+    private func saveNotes() {
+        let defaults = UserDefaults.standard
+        defaults.set(notes, forKey: "savedNotes")
+    }
+
+    private func loadNotes() {
+        let defaults = UserDefaults.standard
+        if let saved = defaults.dictionary(forKey: "savedNotes") as? [String: String] {
+            notes = saved
+        }
+    }
 }
-
-
-
-
-
-
 
 #Preview {
     CalendarView()
