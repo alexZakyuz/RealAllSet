@@ -9,13 +9,11 @@ import SwiftUI
 
 struct NewClass: View {
     var body: some View {
-        VStack {
-            Text("Create a New Class")
-                .font(.largeTitle)
-                .padding()
-        }
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
+
+
 
 #Preview {
     NewClass()

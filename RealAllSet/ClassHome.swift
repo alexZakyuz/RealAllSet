@@ -6,6 +6,10 @@
 //
 
 import SwiftUI
+struct ClassModel: Identifiable, Hashable {
+    let id = UUID()
+    var name: String
+}
 
 struct ClassHome: View {
     // Sample classes
@@ -73,7 +77,9 @@ struct ClassHome: View {
 }
 
 
-
 #Preview {
     ClassHome()
 }
+
+
+
