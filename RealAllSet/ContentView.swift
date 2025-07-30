@@ -9,10 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    //@State var name = ""
     let currentDate = Date()
-    //@Query private var newName: [NewName]
-    //@Environment(\.modelContext) private var context
+    @Environment(\.modelContext) private var context
+    @Query private var users: [User]
+    let userName: String
     
     var body: some View {
         NavigationStack{
@@ -23,7 +23,7 @@ struct ContentView: View {
                 //hello+date
                 VStack{
                     HStack(alignment: .bottom){
-                        Text("Hello, name")
+                        Text("Hello, \(userName)!")
                         //add variable
                             .font(.title)
                             .fontWeight(.bold)
@@ -85,6 +85,6 @@ struct ContentView: View {
 }//struct
 
 #Preview {
-    ContentView()
-    //    .modelContainer(for: NewName.self, inMemory:true)
+    ContentView(userName: "Test User")
+        .modelContainer(for: User.self, inMemory: true)
 }
