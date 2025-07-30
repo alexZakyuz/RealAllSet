@@ -51,7 +51,7 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        NavigationLink{Calendar()} label: {Text(
+                        NavigationLink{CalendarView()} label: {Text(
                             "🗓️ Calendar")
                         .font(.title2)
                         .fontWeight(.semibold)
