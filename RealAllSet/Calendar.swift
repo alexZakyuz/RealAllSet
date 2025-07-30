@@ -66,7 +66,7 @@ struct CalendarView: View {
                             Text("\(Calendar.current.component(.day, from: date))")
                                 .frame(width: 30, height: 30)
                                 .background(
-                                    selectedDate == date ? Color.blue.opacity(0.3) : Color.clear
+                                    selectedDate == date ? Color.purple.opacity(0.3) : Color.clear
                                 )
                                 .clipShape(Circle())
                         }
@@ -86,7 +86,7 @@ struct CalendarView: View {
                         ))
                         .frame(height: 150)
                         .padding()
-                        .background(Color.white)
+                        .background(Color("darkgreen"))
                         .cornerRadius(10)
                         .shadow(radius: 2)
                     }
