@@ -1,15 +1,15 @@
 //
-//  Name.swift
+//  User.swift
 //  RealAllSet
 //
-//  Created by Scholar on 7/29/25.
+//  Created by Scholar on 7/30/25.
 //
 
 import Foundation
 import SwiftData
 
 @Model
-class Name {
+class User {
     
     var name: String
     
@@ -18,5 +18,5 @@ class Name {
         self.name = name
         
     }//init
-            
+    
 }//class
