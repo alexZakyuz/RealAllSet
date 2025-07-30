@@ -75,6 +75,6 @@ struct FirstToDoScreen: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(userName: "Test User")
         .modelContainer(for: ToDoItem.self, inMemory: true)
 }

@@ -5,7 +5,7 @@ import SwiftData
 struct MyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .modelContainer(for: ToDoItem.self)
         }
     }
