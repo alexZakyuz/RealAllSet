@@ -10,86 +10,152 @@ import SwiftUI
 struct Help: View {
     var body: some View {
         //NavigationStack{
-            ZStack{
-                Color("vanilla")
-                    .ignoresSafeArea()
-                VStack {
-                    Text("Guides and Tips")
-                        .font(.largeTitle)
-                        .fontWeight(.heavy)
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        .background(Color("lightgreen")
-                        )
-                        .cornerRadius(19)
-                        .padding()
+        ZStack{
+            Color("vanilla")
+                .ignoresSafeArea()
+            VStack {
+                Text("Guides and Tips")
+                    .font(.largeTitle)
+                    .fontWeight(.heavy)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(Color("lightgreen")
+                    )
+                    .cornerRadius(19)
+                    .padding()
+                Spacer()
+                
+                HStack {
+                    
+                    VStack{
+                        
+                        
+                        Text("Organizing")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                        
+                        
+                        VStack(alignment: .leading) {
+
+                            Text("• Choose your area of focus")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Use a to-do list")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Set goals")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Clean up physical clutter")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Maintain a calender")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            
+                            
+                        }
+                      //  .padding()
+                        
+                        Spacer()
+                    }
+                    .frame(width: 180, height: 500)
+                    .background(Color("beigebrown"))
+                    .cornerRadius(19)
+                    .padding(.leading, 50.0)
                     Spacer()
                     
-                    HStack {
-                        VStack{
-                            
-                            Text("Being Organized")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                            VStack(alignment: .leading) {
-                                Text("• Choose your area of focus")
-                                Text("• Use a to-do list")
-                                Text("• Set goals")
-                                Text("• Clean up physical clutter")
-                                Text("• Maintain a calender")
-
-
-                            }
-
-                            //Spacer()
-                        }
-                        .background(Color("beigebrown"))
-                        .cornerRadius(19)
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                        
-            
-                        
-                        VStack{
-                            
-                            Text("Reduce Stress")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                            //Spacer()
-                        }
-                        .background(Color("beigebrown"))
-                        .cornerRadius(19)
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                        
-                    }//hsyack
                     
+                    
+                    VStack {
+                        
+                        Text("Reduce Stress")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                        
+                        VStack(alignment: .leading) {
+                            Text("• Try to get enough sleep")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Pick a person you trust")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Establish small rituals")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Find a physical activity")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            Text("• Recgonize when you are stressed")
+                                .font(.callout)
+                                .fontWeight(.bold)
+                                .padding()
+                            
+                            
+                        }
+                        .padding()
+                        
+                        Spacer()
+                    }
+                    .frame(width: 180, height: 500)
+
+                    .background(Color("beigebrown"))
+                    .cornerRadius(19)
+                    .padding(.trailing, 50.0)
+                    
+                }//hsyack
+                
+                Spacer()
+                
+                VStack {
                     Text ("Sources")
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundColor(Color("vanilla"))
+                        .multilineTextAlignment(.center)
                         .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                    VStack (alignment: .leading){
+                        
+                        Text("placeholder")
+                            .foregroundColor(Color("vanilla"))
+                    }
+                 
+                    
+                    
+                    
                     
                         
-                        
-                        .background(Color("darkgreen"))
-                        .cornerRadius(19)
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                    Spacer()
+                }
+                .frame(width: 400, height: 150)
+                .background(Color("darkgreen"))
+                .cornerRadius(19)
+                .padding()
+                Spacer()
                     
-                
-                }//vstack
+                    
             }
             
             
-        //}
-
-
-        
-        
-        
-    }//body
-}//struct
-
+            //}
+            
+            
+            
+            
+            
+        }//body
+    }//struct
+}
 #Preview {
     Help()
 }
