@@ -29,6 +29,10 @@ struct VolunteerLogView: View {
     }
 
     var body: some View {
+        ZStack {
+                Color("vanilla")
+                    .ignoresSafeArea()
+
         NavigationView {
             VStack {
                 if entries.isEmpty {
@@ -58,6 +62,7 @@ struct VolunteerLogView: View {
                     .font(.title2)
                     .padding()
             }
+            .background(Color("lightgreen").ignoresSafeArea())
             .navigationTitle("Volunteer Log")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -113,6 +118,7 @@ struct VolunteerLogView: View {
                                     clearForm()
                                     showingAddSheet = false
                                 }
+                            }
                             }
                         }
                     }
