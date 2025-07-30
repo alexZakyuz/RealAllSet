@@ -75,8 +75,8 @@ struct Help: View {
                     
                     VStack {
                         
-                        Text("Reduce Stress")
-                            .font(.title2)
+                        Text("Unwind")
+                            .font(.title)
                             .fontWeight(.bold)
                             .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
                         
@@ -104,7 +104,7 @@ struct Help: View {
                             
                             
                         }
-                        .padding()
+                        //.padding()
                         
                         Spacer()
                     }
@@ -144,7 +144,8 @@ struct Help: View {
                 Spacer()
                     
                     
-            }
+            }//dodohe
+            .padding()
             
             
             //}
