@@ -23,15 +23,18 @@ struct VolunteerLogView: View {
     @State private var newDate = Date()
     @State private var newHours = ""
     @State private var newNotes = ""
-
-    var totalHours: Double {
+    @State private var totalHours: Double = 0.0
+    var hoursCompleted: Double {
         entries.reduce(0) { $0 + $1.hours }
+    }
+    var percentageCompletion: Double {
+        return hoursCompleted / totalHours
     }
 
     var body: some View {
         ZStack {
-                Color("vanilla")
-                    .ignoresSafeArea()
+            Color("vanilla")
+                .ignoresSafeArea()
 
         NavigationView {
             VStack {
@@ -58,7 +61,7 @@ struct VolunteerLogView: View {
                     }
                 }
 
-                Text("Total Hours: \(totalHours, specifier: "%.2f")")
+                Text("Total Hours: \(hoursCompleted, specifier: "%.2f")")
                     .font(.title2)
                     .padding()
             }
