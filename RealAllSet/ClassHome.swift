@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Foundation
 
 extension String: @retroactive Identifiable {
     public var id: String { self }
@@ -168,7 +169,11 @@ struct ClassHome: View {
                 }
             }
         }
-    }
+        .onReceive(NotificationCenter.default.publisher(for: .init("ResetClassList"))) { _ in
+            classList = [] // Reset to default classes
+        }
+        }
+        
 }
 
 //DateFormatter for due date display
