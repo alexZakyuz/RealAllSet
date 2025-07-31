@@ -23,11 +23,13 @@ class Task {
     }
 }
 
-class Class{
+class Class {
     var className: String
-    init(className: String){
+
+    init(className: String) {
         self.className = className
     }
 }
+
 
 

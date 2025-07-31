@@ -100,72 +100,75 @@ struct ToDoListView: View {
 //Main ContentView with String projects
 
 struct ClassHome: View {
-    @State var showInput = false
-    @State var classList = ["Sample Class"]
-    @State var newClass = " "
     @Environment(\.modelContext) var context
-    @Query var tasks: [Task]
-    @State var newTaskTitle = ""
-    @State var newTaskDueDate = Date()
+    @Query var classes: [Class]  // Fetch all Class objects
+
+    @State var showInput = false
+    @State var newClass = ""
     @State private var selectedProject: String?
 
     var body: some View {
-        ZStack{
-            Color(Color("vanilla"))
-            VStack{
+        ZStack {
+            Color(Color("vanilla")).ignoresSafeArea()
+
+            VStack {
                 NavigationView {
-    
-                        List(classList, id: \.self) { course in
+                    List(classes) { course in
                             Button {
-                                selectedProject = course
+                                selectedProject = course.className
                             } label: {
-                                Text(course)
+                                Text(course.className)
                             }
                         }
-                        .navigationTitle("Classes")
-                        .sheet(item: $selectedProject) { project in
-                            ToDoListView(classes: project)
-                        }
-                   
+
+                    .navigationTitle("Classes")
+                    .sheet(item: $selectedProject) { project in
+                        ToDoListView(classes: project)
+                    }
                 }
-                Button(action: {showInput.toggle()}) {
+
+                Button(action: { showInput.toggle() }) {
                     Text(showInput ? "Cancel" : "Create Class")
                         .fontWeight(.semibold)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                        .background(Color(red: 0.56, green: 0.55, blue: 0.75))
                         .foregroundColor(.black)
                         .cornerRadius(20)
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
-        
+
                 if showInput {
-                    VStack(spacing: 10){
+                    VStack(spacing: 10) {
                         TextField("Enter class name...", text: $newClass)
                             .foregroundStyle(.black)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.horizontal)
-                        Button("Submit (Enter class name ↑)"){if !newClass.isEmpty{
-                            classList.append(newClass)
-                            newClass = " "
-                            showInput = false}
+
+                        Button("Submit (Enter class name ↑)") {
+                            let trimmed = newClass.trimmingCharacters(in: .whitespaces)
+                            guard !trimmed.isEmpty else { return }
+
+                            let newClassObj = Class(className: trimmed)
+                            context.insert(newClassObj)
+                            try? context.save()
+
+                            newClass = ""
+                            showInput = false
                         }
                         .fontWeight(.semibold)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                        .background(Color(red: 0.56, green: 0.55, blue: 0.75))
                         .foregroundColor(.black)
                         .cornerRadius(20)
                         .padding()
-                        .cornerRadius(8)
+                    }
+                }
             }
-
-            }
         }
-        }
-        }
-        
+    }
 }
 
 //DateFormatter for due date display
