@@ -13,30 +13,33 @@ struct ContentView: View {
     @Environment(\.modelContext) private var context
     @Query private var users: [User]
     let userName: String
-    
+
+    // Dark mode toggle stored in AppStorage so it persists
+    @AppStorage("isDarkMode") private var isDarkMode = false
+
     var body: some View {
-        NavigationStack{
-            ZStack{
+        NavigationStack {
+            ZStack {
                 Color("vanilla")
                     .ignoresSafeArea()
-                
+
                 //hello+date
-                VStack{
-                    HStack(alignment: .bottom){
+                VStack {
+                    HStack(alignment: .bottom) {
                         Text("Hello, \(userName)!")
-                        //add variable
                             .font(.title)
                             .fontWeight(.bold)
                         Spacer()
                         Text(currentDate, style: .date)
                             .font(.title2)
                             .fontWeight(.semibold)
-                    }//HStack
+                    } // HStack
                     .padding([.top, .leading, .trailing], 30)
-                    
-                //add to-do's +background
+
+                    // add to-do's +background
                     Spacer()
-                //bottom toolbar
+
+                    // bottom toolbar
                     HStack(spacing: 12) {
                         NavigationLink {
                             ClassHome()
@@ -49,11 +52,11 @@ struct ContentView: View {
                                 .minimumScaleFactor(0.7)
                                 .padding(.horizontal, 10)
                                 .frame(height: 50)
-                                .frame(maxWidth: .infinity)  // flexible width
+                                .frame(maxWidth: .infinity) // flexible width
                                 .background(Color("lightgreen"))
                                 .cornerRadius(8)
                         }
-                        
+
                         NavigationLink {
                             CalendarView()
                         } label: {
@@ -65,11 +68,11 @@ struct ContentView: View {
                                 .minimumScaleFactor(0.7)
                                 .padding(.horizontal, 10)
                                 .frame(height: 50)
-                                .frame(maxWidth: .infinity)  // flexible width
+                                .frame(maxWidth: .infinity) // flexible width
                                 .background(Color("lightgreen"))
                                 .cornerRadius(8)
                         }
-                        
+
                         NavigationLink {
                             Help()
                         } label: {
@@ -81,7 +84,7 @@ struct ContentView: View {
                                 .background(Color("lightgreen"))
                                 .cornerRadius(8)
                         }
-                        
+
                         NavigationLink {
                             VolunteerLogView()
                         } label: {
@@ -95,19 +98,25 @@ struct ContentView: View {
                         }
                     }
                     .padding(.horizontal, 20)
-
-
-
-                        
-                        
-                    
-               
-                    
-                }//VStack
-            }//Zstack
-        }//navigationstack
-    }//body
-}//struct
+                } // VStack
+            } // ZStack
+            .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isDarkMode.toggle()
+                    } label: {
+                        Image(systemName: isDarkMode ? "moon.fill" : "sun.max")
+                            .imageScale(.large)
+                    }
+                    .accessibilityLabel("Toggle Dark Mode")
+                }
+            }
+        }
+        // Apply preferred color scheme app-wide based on user toggle
+        .preferredColorScheme(isDarkMode ? .dark : .light)
+    } // body
+} // struct
 
 #Preview {
     ContentView(userName: "Test User")

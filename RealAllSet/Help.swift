@@ -9,11 +9,11 @@ import SwiftUI
 
 struct Help: View {
     var body: some View {
-        ScrollView {
-            ZStack {
-                Color("vanilla")
-                    .ignoresSafeArea()
-                
+        ZStack {
+            Color("vanilla") // Full background color
+                .ignoresSafeArea()
+            
+            ScrollView {
                 VStack(spacing: 24) {
                     
                     Text("Guides and Tips")
