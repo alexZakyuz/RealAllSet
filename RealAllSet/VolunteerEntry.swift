@@ -39,6 +39,7 @@ struct VolunteerEntry: Identifiable, Codable {
 struct VolunteerLogView: View {
     @State private var entries: [VolunteerEntry] = []
     @State private var showingAddSheet = false
+    @State private var showingGoalSheet = false
     
     // Form fields
     @State private var newActivity = ""
@@ -46,12 +47,14 @@ struct VolunteerLogView: View {
     @State private var newHours = ""
     @State private var newNotes = ""
     
+    // Goal setting
+    @State private var goalHours = 0
+    @State private var newGoalText = ""
+    
     // Error handling states
     @State private var showingAlert = false
     @State private var alertMessage = ""
     @State private var alertTitle = "Error"
-    
-    let goalHours = 500.0
 
     var totalHours: Double {
         entries.reduce(0) { $0 + $1.hours }
@@ -69,6 +72,32 @@ struct VolunteerLogView: View {
                     .ignoresSafeArea(.all)
                 
                 VStack(spacing: 20) {
+                    // Goal Display Section
+                    VStack(spacing: 8) {
+                        Text("Volunteer Goal")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Button(action: {
+                            newGoalText = String(Int(goalHours))
+                            showingGoalSheet = true
+                        }) {
+                            HStack {
+                                Text("\(Int(goalHours)) hours")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                Image(systemName: "pencil")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(Color("darkgreen"))
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .background(Color("lightgreen").opacity(0.3))
+                        .cornerRadius(8)
+                    }
+                    .padding(.top)
+                    
                     if entries.isEmpty {
                         VStack(spacing: 16) {
                             Image(systemName: "heart.fill")
@@ -107,7 +136,8 @@ struct VolunteerLogView: View {
                     }
 
                     // RESTORED: Light green background around progress ring
-                    ProgressRing(progress: progress, goalHours: goalHours)
+                    ProgressRing(progress: progress, goalHours: goalHours, totalHours: totalHours)
+                        .padding()
                         .background(Color("lightgreen"))
                         .cornerRadius(20)
                         .padding(.horizontal)
@@ -116,9 +146,6 @@ struct VolunteerLogView: View {
             }
             .navigationTitle("Volunteer Log")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    EditButton()
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
                         Image(systemName: "plus")
@@ -127,6 +154,11 @@ struct VolunteerLogView: View {
             }
             .onAppear {
                 loadEntries()
+                loadGoal()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("ResetVolunteerEntries"))) { _ in
+                entries.removeAll()
+                goalHours = 0 // Reset to default goal
             }
             .alert(alertTitle, isPresented: $showingAlert) {
                 Button("OK") { }
@@ -135,6 +167,9 @@ struct VolunteerLogView: View {
             }
             .sheet(isPresented: $showingAddSheet) {
                 addEntrySheet
+            }
+            .sheet(isPresented: $showingGoalSheet) {
+                goalSettingSheet
             }
         }
         .navigationViewStyle(.stack) // FIXED: Consistent navigation style
@@ -190,6 +225,52 @@ struct VolunteerLogView: View {
             }
         }
     }
+    
+    // MARK: - Goal Setting Sheet
+    private var goalSettingSheet: some View {
+        NavigationView {
+            ZStack {
+                Color("vanilla")
+                    .ignoresSafeArea(.all)
+                
+                Form {
+                    Section(header: Text("Set Your Volunteer Goal")) {
+                        TextField("Total hours goal", text: $newGoalText)
+                            .keyboardType(.numberPad)
+                            .textFieldStyle(.roundedBorder)
+                        
+                        Text("Current goal: \(Int(goalHours)) hours")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .scrollContentBackground(.hidden) // FIXED: Hide form background
+                .background(Color.clear) // FIXED: Transparent form background
+            }
+            .navigationTitle("Goal Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        newGoalText = ""
+                        showingGoalSheet = false
+                    }
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        if let newGoal = Double(newGoalText), newGoal > 0 {
+                            goalHours = newGoal
+                            saveGoal()
+                            newGoalText = ""
+                            showingGoalSheet = false
+                        }
+                    }
+                    .disabled(Double(newGoalText) == nil || Double(newGoalText) ?? 0 <= 0)
+                }
+            }
+        }
+    }
 
     // MARK: - Error Handling Functions
     func saveNewEntry() {
@@ -209,7 +290,7 @@ struct VolunteerLogView: View {
         }
         
         // Validate hours
-        guard let hours = Double(newHours), hours > 0, hours <= 24 else {
+        guard let hours = Double(newHours), hours > 0 else {
             throw VolunteerLogError.invalidHours
         }
         
@@ -275,6 +356,17 @@ struct VolunteerLogView: View {
         }
     }
     
+    func saveGoal() {
+        UserDefaults.standard.set(goalHours, forKey: "volunteerGoal")
+    }
+    
+    func loadGoal() {
+        let savedGoal = UserDefaults.standard.double(forKey: "volunteerGoal")
+        if savedGoal > 0 {
+            goalHours = savedGoal
+        }
+    }
+    
     func showError(_ error: Error) {
         if let volunteerError = error as? VolunteerLogError {
             alertTitle = "Error"
@@ -298,6 +390,7 @@ struct VolunteerLogView: View {
 struct ProgressRing: View {
     var progress: Double
     var goalHours: Double
+    var totalHours: Double
 
     var body: some View {
         ZStack {
@@ -320,7 +413,7 @@ struct ProgressRing: View {
                 Text("\(Int(progress * 100))%")
                     .font(.title)
                     .fontWeight(.bold)
-                Text("\(Int(progress * goalHours))/\(Int(goalHours)) hrs")
+                Text("\(Int(totalHours))/\(Int(goalHours)) hrs")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

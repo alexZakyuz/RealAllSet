@@ -78,11 +78,11 @@ struct ContentView: View {
                                 .background(Color("lightgreen"))
                                 .cornerRadius(8)
                         }
-
+                        
                         NavigationLink {
-                            Help()
+                            VolunteerLogView()
                         } label: {
-                            Text("ⓘ")
+                            Text("Log")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.black)
@@ -92,9 +92,9 @@ struct ContentView: View {
                         }
 
                         NavigationLink {
-                            VolunteerLogView()
+                            Help()
                         } label: {
-                            Text("Log")
+                            Text("ⓘ")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)
@@ -102,6 +102,7 @@ struct ContentView: View {
                                 .background(Color("darkbluepurple"))
                                 .cornerRadius(8)
                         }
+
                     }
                     .padding(.horizontal, 20)
                 }
