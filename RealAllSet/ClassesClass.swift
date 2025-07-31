@@ -23,3 +23,15 @@ class Task {
     }
 }
 
+@Model
+class Course: Identifiable {
+    var id: UUID
+    var className: String
+
+    init(className: String) {
+        self.id = UUID()
+        self.className = className
+    }
+}
+
+
