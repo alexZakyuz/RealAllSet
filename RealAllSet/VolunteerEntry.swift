@@ -5,6 +5,7 @@
 //  Created by Scholar on 7/30/25.
 //
 import SwiftUI
+import Foundation
 
 struct VolunteerEntry: Identifiable, Codable {
     let id: UUID
@@ -80,6 +81,9 @@ struct VolunteerLogView: View {
                 }
                 .onAppear {
                     loadEntries()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .init("ResetVolunteerEntries"))) { _ in
+                    entries.removeAll()
                 }
                 .sheet(isPresented: $showingAddSheet) {
                     NavigationView {

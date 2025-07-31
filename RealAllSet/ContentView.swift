@@ -14,10 +14,11 @@ struct ContentView: View {
     @Query private var users: [User]
     let userName: String
 
-    // Dark mode toggle stored in AppStorage so it persists
-    @AppStorage("isDarkMode") private var isDarkMode = false
+    @State private var isDarkMode = false
     
     @State private var showSettings = false
+    
+    @State private var calendarNotes: [String: String] = [:]
 
     var body: some View {
         NavigationStack {
@@ -124,7 +125,10 @@ struct ContentView: View {
                 }
             }//toolbar
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                NavigationView {
+                    SettingsView(isDarkMode: $isDarkMode)
+                }//navview
+                .preferredColorScheme(isDarkMode ? .dark : .light)
             }
         }
         // Apply preferred color scheme app-wide based on user toggle
