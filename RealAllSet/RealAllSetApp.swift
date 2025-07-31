@@ -12,16 +12,9 @@ import SwiftData
 struct RealAllSetApp: App {
     
     var body: some Scene {
-        
         WindowGroup {
-            
             RootView()
-            
-        }//windowgroup
-        WindowGroup {
-                    ClassHome()
-                }
-                .modelContainer(for: [Class.self, Task.self])
-    }//body
-    
-}//struct
+        }
+        .modelContainer(for: [User.self, Task.self, Course.self])
+    }
+}

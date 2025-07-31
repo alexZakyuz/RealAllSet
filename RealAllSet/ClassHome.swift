@@ -101,7 +101,7 @@ struct ToDoListView: View {
 
 struct ClassHome: View {
     @Environment(\.modelContext) var context
-    @Query var classes: [Class]  // Fetch all Class objects
+    @Query var classes: [Course]  // Fetch all Class objects
 
     @State var showInput = false
     @State var newClass = ""
@@ -150,7 +150,7 @@ struct ClassHome: View {
                             let trimmed = newClass.trimmingCharacters(in: .whitespaces)
                             guard !trimmed.isEmpty else { return }
 
-                            let newClassObj = Class(className: trimmed)
+                            let newClassObj = Course(className: trimmed)
                             context.insert(newClassObj)
                             try? context.save()
 
@@ -184,6 +184,6 @@ private let dateFormatter: DateFormatter = {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ClassHome()
-            .modelContainer(for: Task.self, inMemory: true)
+            .modelContainer(for: [Task.self, Course.self], inMemory: true)
     }
 }
