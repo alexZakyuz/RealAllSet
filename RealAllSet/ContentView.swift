@@ -16,6 +16,8 @@ struct ContentView: View {
 
     // Dark mode toggle stored in AppStorage so it persists
     @AppStorage("isDarkMode") private var isDarkMode = false
+    
+    @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
@@ -103,14 +105,26 @@ struct ContentView: View {
             .navigationTitle("Home")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        isDarkMode.toggle()
-                    } label: {
-                        Image(systemName: isDarkMode ? "moon.fill" : "sun.max")
-                            .imageScale(.large)
-                    }
-                    .accessibilityLabel("Toggle Dark Mode")
+                    HStack(spacing: 16) {
+                        Button {
+                            showSettings = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .imageScale(.large)
+                        }
+                        .accessibilityLabel("Settings")
+                        Button {
+                            isDarkMode.toggle()
+                        } label: {
+                            Image(systemName: isDarkMode ? "moon.fill" : "sun.max")
+                                .imageScale(.large)
+                        }//button
+                        .accessibilityLabel("Toggle Dark Mode")
+                    }//hstack
                 }
+            }//toolbar
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
             }
         }
         // Apply preferred color scheme app-wide based on user toggle
