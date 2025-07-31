@@ -108,6 +108,7 @@ struct VolunteerLogView: View {
 
                     // RESTORED: Light green background around progress ring
                     ProgressRing(progress: progress, goalHours: goalHours)
+                        .padding()
                         .background(Color("lightgreen"))
                         .cornerRadius(20)
                         .padding(.horizontal)
@@ -209,7 +210,7 @@ struct VolunteerLogView: View {
         }
         
         // Validate hours
-        guard let hours = Double(newHours), hours > 0, hours <= 24 else {
+        guard let hours = Double(newHours), hours > 0 else {
             throw VolunteerLogError.invalidHours
         }
         
