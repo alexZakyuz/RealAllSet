@@ -111,57 +111,58 @@ struct ClassHome: View {
 
     var body: some View {
         ZStack{
-            Color("vanilla")
-        VStack{
-            NavigationView {
-                List(classList, id: \.self) { course in
-                    Button {
-                        selectedProject = course
-                    } label: {
-                        Text(course)
-                    }
+            Color(Color("vanilla"))
+            VStack{
+                NavigationView {
+    
+                        List(classList, id: \.self) { course in
+                            Button {
+                                selectedProject = course
+                            } label: {
+                                Text(course)
+                            }
+                        }
+                        .navigationTitle("Classes")
+                        .sheet(item: $selectedProject) { project in
+                            ToDoListView(classes: project)
+                        }
+                   
                 }
-                .navigationTitle("Classes")
-                .sheet(item: $selectedProject) { project in
-                    ToDoListView(classes: project)
+                Button(action: {showInput.toggle()}) {
+                    Text(showInput ? "Cancel" : "Create Class")
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                        .foregroundColor(.black)
+                        .cornerRadius(20)
                 }
-                
+                .padding(.horizontal)
+                .padding(.bottom)
+        
+                if showInput {
+                    VStack(spacing: 10){
+                        TextField("Enter class name...", text: $newClass)
+                            .foregroundStyle(.black)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal)
+                        Button("Submit (Enter class name ↑)"){if !newClass.isEmpty{
+                            classList.append(newClass)
+                            newClass = " "
+                            showInput = false}
+                        }
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                        .foregroundColor(.black)
+                        .cornerRadius(20)
+                        .padding()
+                        .cornerRadius(8)
             }
-            Button(action: {showInput.toggle()}) {
-                Text(showInput ? "Cancel" : "Create Class")
-                    .fontWeight(.semibold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
-                    .foregroundColor(.black)
-                    .cornerRadius(20)
-            }
-            .padding(.horizontal)
-            .padding(.bottom)
-            
-            if showInput {
-                VStack(spacing: 10){
-                    TextField("Enter class name...", text: $newClass)
-                        .foregroundStyle(.black)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal)
-                    Button("Submit (Enter class name ↑)"){if !newClass.isEmpty{
-                        classList.append(newClass)
-                        newClass = " "
-                        showInput = false}
-                    }
-                    .fontWeight(.semibold)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
-                    .foregroundColor(.black)
-                    .cornerRadius(20)
-                    .padding()
-                    .cornerRadius(8)
-                }
 
-                }
             }
+        }
         }
         }
         

@@ -23,3 +23,11 @@ class Task {
     }
 }
 
+class Class{
+    var className: String
+    init(className: String){
+        self.className = className
+    }
+}
+
+
