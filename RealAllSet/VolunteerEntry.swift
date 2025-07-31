@@ -302,7 +302,7 @@ struct ProgressRing: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.gray.opacity(0.3), lineWidth: 20)
+                .stroke(Color.purple.opacity(0.3), lineWidth: 20)
 
             Circle()
                 .trim(from: 0.0, to: progress)
