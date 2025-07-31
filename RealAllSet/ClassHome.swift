@@ -14,7 +14,6 @@ extension String: @retroactive Identifiable {
 }
 
 //ToDoListView for a project (String)
-
 struct ToDoListView: View {
     
     @Environment(\.modelContext) var context
@@ -30,7 +29,8 @@ struct ToDoListView: View {
         // Set up the query dynamically using the `filter:` initializer
         _tasks = Query(filter: #Predicate<Task> { task in
             task.className == classes
-        })}
+        })
+    }
 
     var body: some View {
         NavigationView {
@@ -95,89 +95,113 @@ struct ToDoListView: View {
         }
         try? context.save()
     }
-
 }
 
-//Main ContentView with String projects
-
+//Main ContentView with persistent classes using AppStorage
 struct ClassHome: View {
-    @Environment(\.modelContext) var context
-    @Query var classes: [Course]  // Fetch all Class objects
-
     @State var showInput = false
     @State var newClass = ""
+    @Environment(\.modelContext) var context
+    
+    // Use AppStorage to persist the class list
+    @AppStorage("classList") private var classListData: Data = Data()
+    @State private var classList: [String] = []
+    
     @State private var selectedProject: String?
 
     var body: some View {
-        ZStack {
-            Color(Color("vanilla")).ignoresSafeArea()
-
-            VStack {
-                NavigationView {
-                    List(classes) { course in
-                            Button {
-                                selectedProject = course.className
-                            } label: {
-                                Text(course.className)
-                            }
+        VStack{
+            NavigationView {
+                List(classList, id: \.self) { course in
+                    Button {
+                        selectedProject = course
+                    } label: {
+                        HStack {
+                            Text(course)
+                            Spacer()
                         }
-
-                    .navigationTitle("Classes")
-                    .sheet(item: $selectedProject) { project in
-                        ToDoListView(classes: project)
                     }
                 }
-
-                Button(action: { showInput.toggle() }) {
-                    Text(showInput ? "Cancel" : "Create Class")
-                        .fontWeight(.semibold)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color(red: 0.56, green: 0.55, blue: 0.75))
-                        .foregroundColor(.black)
-                        .cornerRadius(20)
+                .navigationTitle("Classes")
+                .sheet(item: $selectedProject) { project in
+                    ToDoListView(classes: project)
                 }
-                .padding(.horizontal)
-                .padding(.bottom)
-
-                if showInput {
-                    VStack(spacing: 10) {
-                        TextField("Enter class name...", text: $newClass)
-                            .foregroundStyle(.black)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal)
-
-                        Button("Submit (Enter class name ↑)") {
-                            let trimmed = newClass.trimmingCharacters(in: .whitespaces)
-                            guard !trimmed.isEmpty else { return }
-
-                            let newClassObj = Course(className: trimmed)
-                            context.insert(newClassObj)
-                            try? context.save()
-
-                            newClass = ""
-                            showInput = false
+            }
+            
+            Button(action: {showInput.toggle()}) {
+                Text(showInput ? "Cancel" : "Create Class")
+                    .fontWeight(.semibold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                    .foregroundColor(.black)
+                    .cornerRadius(20)
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+            
+            if showInput {
+                VStack(spacing: 10){
+                    TextField("Enter class name...", text: $newClass)
+                        .foregroundStyle(.black)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                    
+                    Button("Submit") {
+                        if !newClass.trimmingCharacters(in: .whitespaces).isEmpty {
+                            addClass()
                         }
-                        .fontWeight(.semibold)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color(red: 0.56, green: 0.55, blue: 0.75))
-                        .foregroundColor(.black)
-                        .cornerRadius(20)
-                        .padding()
                     }
+                    .fontWeight(.semibold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                    .foregroundColor(.black)
+                    .cornerRadius(20)
+                    .padding()
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: .init("ResetClassList"))) { _ in
-            classList = [] // Reset to default classes
+        .onAppear {
+            loadClassList()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .init("ResetClassList"))) { _ in
+            classList = ["geometry", "english", "history"] // Reset to default classes
+            saveClassList()
+        }
+    }
+    
+    func addClass() {
+        let trimmedName = newClass.trimmingCharacters(in: .whitespaces)
+        
+        // Check if class already exists
+        if !classList.contains(where: { $0.lowercased() == trimmedName.lowercased() }) {
+            classList.append(trimmedName)
+            saveClassList()
         }
         
+        newClass = ""
+        showInput = false
+    }
+    
+    func loadClassList() {
+        if let decodedList = try? JSONDecoder().decode([String].self, from: classListData) {
+            classList = decodedList
+        } else {
+            // Set default classes if nothing is saved
+            classList = ["geometry", "english", "history"]
+            saveClassList()
+        }
+    }
+    
+    func saveClassList() {
+        if let encodedData = try? JSONEncoder().encode(classList) {
+            classListData = encodedData
+        }
+    }
 }
 
 //DateFormatter for due date display
-
 private let dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .medium
@@ -185,10 +209,9 @@ private let dateFormatter: DateFormatter = {
 }()
 
 //Preview
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ClassHome()
-            .modelContainer(for: [Task.self, Course.self], inMemory: true)
+            .modelContainer(for: Task.self, inMemory: true)
     }
 }
