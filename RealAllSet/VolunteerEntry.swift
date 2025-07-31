@@ -6,6 +6,27 @@
 //
 import SwiftUI
 
+// MARK: - Error Handling Models
+enum VolunteerLogError: LocalizedError {
+    case invalidHours
+    case emptyActivity
+    case saveFailed
+    case loadFailed
+    
+    var errorDescription: String? {
+        switch self {
+        case .invalidHours:
+            return "Please enter valid hours (numbers only)"
+        case .emptyActivity:
+            return "Activity description cannot be empty"
+        case .saveFailed:
+            return "Failed to save entry. Please try again."
+        case .loadFailed:
+            return "Failed to load previous entries"
+        }
+    }
+}
+
 struct VolunteerEntry: Identifiable, Codable {
     let id: UUID
     var activity: String
@@ -17,12 +38,18 @@ struct VolunteerEntry: Identifiable, Codable {
 struct VolunteerLogView: View {
     @State private var entries: [VolunteerEntry] = []
     @State private var showingAddSheet = false
-
+    
+    // Form fields
     @State private var newActivity = ""
     @State private var newDate = Date()
     @State private var newHours = ""
     @State private var newNotes = ""
-
+    
+    // Error handling states
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
+    @State private var alertTitle = "Error"
+    
     let goalHours = 500.0
 
     var totalHours: Double {
@@ -34,15 +61,26 @@ struct VolunteerLogView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color("vanilla")
-                .ignoresSafeArea()
-
-            NavigationView {
+        NavigationView {
+            ZStack {
+                // FIXED: Proper background hierarchy
+                Color("vanilla")
+                    .ignoresSafeArea(.all)
+                
                 VStack(spacing: 20) {
                     if entries.isEmpty {
-                        Text("No volunteer entries yet.")
-                            .padding()
+                        VStack(spacing: 16) {
+                            Image(systemName: "heart.fill")
+                                .font(.system(size: 50))
+                                .foregroundColor(.gray)
+                            Text("No volunteer entries yet.")
+                                .font(.title2)
+                                .foregroundColor(.gray)
+                            Text("Tap + to add your first entry!")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(40)
                     } else {
                         List {
                             ForEach(entries.sorted { $0.date > $1.date }) { entry in
@@ -57,99 +95,194 @@ struct VolunteerLogView: View {
                                             .foregroundColor(.gray)
                                     }
                                 }
-                                .padding(.vertical, 4)
+                                .padding(.vertical, 8) // Increased padding for more space between entries
+                                .listRowBackground(Color.white) // Clean white background for readability
                             }
                             .onDelete(perform: deleteEntry)
                         }
                         .listStyle(.insetGrouped)
+                        .scrollContentBackground(.hidden) // FIXED: Hide default background
+                        .background(Color.clear) // FIXED: Transparent list background
                     }
 
+                    // RESTORED: Light green background around progress ring
                     ProgressRing(progress: progress, goalHours: goalHours)
+                        .background(Color("lightgreen"))
+                        .cornerRadius(20)
+                        .padding(.horizontal)
                 }
-                .background(Color("lightgreen").ignoresSafeArea())
-                .navigationTitle("Volunteer Log")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        EditButton() // Enables swipe/delete and edit mode
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: { showingAddSheet = true }) {
-                            Image(systemName: "plus")
-                        }
+                .padding(.horizontal)
+            }
+            .navigationTitle("Volunteer Log")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { showingAddSheet = true }) {
+                        Image(systemName: "plus")
                     }
                 }
-                .onAppear {
-                    loadEntries()
-                }
-                .sheet(isPresented: $showingAddSheet) {
-                    NavigationView {
-                        Form {
-                            Section(header: Text("Activity")) {
-                                TextField("What did you do?", text: $newActivity)
-                            }
-
-                            Section(header: Text("Date")) {
-                                DatePicker("Date", selection: $newDate, displayedComponents: .date)
-                            }
-
-                            Section(header: Text("Hours")) {
-                                TextField("Hours (e.g. 2.5)", text: $newHours)
-                                    .keyboardType(.decimalPad)
-                            }
-
-                            Section(header: Text("Notes (optional)")) {
-                                TextField("Any additional info?", text: $newNotes)
-                            }
-                        }
-                        .navigationTitle("Add Entry")
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Cancel") {
-                                    clearForm()
-                                    showingAddSheet = false
-                                }
-                            }
-
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Save") {
-                                    if let hrs = Double(newHours), !newActivity.isEmpty {
-                                        let entry = VolunteerEntry(
-                                            id: UUID(),
-                                            activity: newActivity,
-                                            date: newDate,
-                                            hours: hrs,
-                                            notes: newNotes
-                                        )
-                                        entries.append(entry)
-                                        saveEntries()
-                                        clearForm()
-                                        showingAddSheet = false
-                                    }
-                                }
-                            }
-                        }
+            }
+            .onAppear {
+                loadEntries()
+            }
+            .alert(alertTitle, isPresented: $showingAlert) {
+                Button("OK") { }
+            } message: {
+                Text(alertMessage)
+            }
+            .sheet(isPresented: $showingAddSheet) {
+                addEntrySheet
+            }
+        }
+        .navigationViewStyle(.stack) // FIXED: Consistent navigation style
+    }
+    
+    // MARK: - Add Entry Sheet with Error Handling
+    private var addEntrySheet: some View {
+        NavigationView {
+            ZStack {
+                Color("vanilla")
+                    .ignoresSafeArea(.all)
+                
+                Form {
+                    Section(header: Text("Activity")) {
+                        TextField("What did you do?", text: $newActivity)
+                            .textFieldStyle(.roundedBorder)
                     }
+
+                    Section(header: Text("Date")) {
+                        DatePicker("Date", selection: $newDate, displayedComponents: .date)
+                    }
+
+                    Section(header: Text("Hours")) {
+                        TextField("Hours (e.g. 2.5)", text: $newHours)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
+                    Section(header: Text("Notes (optional)")) {
+                        TextField("Any additional info?", text: $newNotes)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                }
+                .scrollContentBackground(.hidden) // FIXED: Hide form background
+                .background(Color.clear) // FIXED: Transparent form background
+            }
+            .navigationTitle("Add Entry")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        clearForm()
+                        showingAddSheet = false
+                    }
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        saveNewEntry()
+                    }
+                    .disabled(newActivity.isEmpty || newHours.isEmpty)
                 }
             }
         }
     }
 
-    func deleteEntry(at offsets: IndexSet) {
-        entries.remove(atOffsets: offsets)
-        saveEntries()
+    // MARK: - Error Handling Functions
+    func saveNewEntry() {
+        do {
+            try validateAndSaveEntry()
+            clearForm()
+            showingAddSheet = false
+        } catch {
+            showError(error)
+        }
+    }
+    
+    func validateAndSaveEntry() throws {
+        // Validate activity
+        guard !newActivity.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw VolunteerLogError.emptyActivity
+        }
+        
+        // Validate hours
+        guard let hours = Double(newHours), hours > 0, hours <= 24 else {
+            throw VolunteerLogError.invalidHours
+        }
+        
+        // Create entry
+        let entry = VolunteerEntry(
+            id: UUID(),
+            activity: newActivity.trimmingCharacters(in: .whitespacesAndNewlines),
+            date: newDate,
+            hours: hours,
+            notes: newNotes.trimmingCharacters(in: .whitespacesAndNewlines)
+        )
+        
+        // Add to entries
+        entries.append(entry)
+        
+        // Save with error handling
+        do {
+            try saveEntries()
+        } catch {
+            // Remove the entry we just added if save fails
+            entries.removeLast()
+            throw VolunteerLogError.saveFailed
+        }
     }
 
-    func saveEntries() {
-        if let data = try? JSONEncoder().encode(entries) {
+    func deleteEntry(at offsets: IndexSet) {
+        let sortedEntries = entries.sorted { $0.date > $1.date }
+        let entriesToDelete = offsets.map { sortedEntries[$0] }
+        
+        // Remove entries
+        for entry in entriesToDelete {
+            if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+                entries.remove(at: index)
+            }
+        }
+        
+        // Save changes
+        do {
+            try saveEntries()
+        } catch {
+            showError(VolunteerLogError.saveFailed)
+        }
+    }
+
+    func saveEntries() throws {
+        do {
+            let data = try JSONEncoder().encode(entries)
             UserDefaults.standard.set(data, forKey: "volunteerEntries")
+        } catch {
+            throw VolunteerLogError.saveFailed
         }
     }
 
     func loadEntries() {
-        if let data = UserDefaults.standard.data(forKey: "volunteerEntries"),
-           let saved = try? JSONDecoder().decode([VolunteerEntry].self, from: data) {
-            entries = saved
+        do {
+            guard let data = UserDefaults.standard.data(forKey: "volunteerEntries") else {
+                // No saved data is fine, start with empty array
+                return
+            }
+            entries = try JSONDecoder().decode([VolunteerEntry].self, from: data)
+        } catch {
+            showError(VolunteerLogError.loadFailed)
         }
+    }
+    
+    func showError(_ error: Error) {
+        if let volunteerError = error as? VolunteerLogError {
+            alertTitle = "Error"
+            alertMessage = volunteerError.localizedDescription
+        } else {
+            alertTitle = "Unexpected Error"
+            alertMessage = error.localizedDescription
+        }
+        showingAlert = true
     }
 
     func clearForm() {
@@ -162,7 +295,7 @@ struct VolunteerLogView: View {
 
 // MARK: - Progress Ring View
 struct ProgressRing: View {
-    var progress: Double // Between 0 and 1
+    var progress: Double
     var goalHours: Double
 
     var body: some View {
@@ -173,19 +306,22 @@ struct ProgressRing: View {
             Circle()
                 .trim(from: 0.0, to: progress)
                 .stroke(
-                    AngularGradient(gradient: Gradient(colors: [Color("beigebrown"), Color("darkgreen")]), center: .center),
+                    AngularGradient(
+                        gradient: Gradient(colors: [Color("beigebrown"), Color("darkgreen")]),
+                        center: .center
+                    ),
                     style: StrokeStyle(lineWidth: 20, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .animation(.easeOut, value: progress)
+                .animation(.easeOut(duration: 1.0), value: progress)
 
-            VStack {
+            VStack(spacing: 4) {
                 Text("\(Int(progress * 100))%")
                     .font(.title)
                     .fontWeight(.bold)
                 Text("\(Int(progress * goalHours))/\(Int(goalHours)) hrs")
                     .font(.caption)
-                    .foregroundColor(.gray)
+                    .foregroundColor(.secondary)
             }
         }
         .frame(width: 180, height: 180)
@@ -196,5 +332,3 @@ struct ProgressRing: View {
 #Preview {
     VolunteerLogView()
 }
-
-
