@@ -99,34 +99,49 @@ struct ToDoListView: View {
 
 //Main ContentView with persistent classes using AppStorage
 struct ClassHome: View {
-    @State var showInput = false
-    @State var newClass = ""
-    @Environment(\.modelContext) var context
     
-    // Use AppStorage to persist the class list
-    @AppStorage("classList") private var classListData: Data = Data()
-    @State private var classList: [String] = []
-    
-    @State private var selectedProject: String?
-
+        @State var showInput = false
+        @State var newClass = ""
+        @Environment(\.modelContext) var context
+        
+        // Use AppStorage to persist the class list
+        @AppStorage("classList") private var classListData: Data = Data()
+        @State private var classList: [String] = []
+        
+        @State private var selectedProject: String?
+        
     var body: some View {
+        ZStack{
+            Color("vanilla")
+                .ignoresSafeArea()
         VStack{
             NavigationView {
-                List(classList, id: \.self) { course in
-                    Button {
-                        selectedProject = course
-                    } label: {
-                        HStack {
-                            Text(course)
-                            Spacer()
+                ZStack{
+                    Color("vanilla")
+                        .ignoresSafeArea()
+                    List(classList, id: \.self) { course in
+                        Button {
+                            selectedProject = course
+                        } label: {
+                            HStack {
+                                Text("⬩ \(course)")
+                                    .font(.title3)
+                                Spacer()
+                            }
+                            
                         }
+                        .listRowBackground(Color("lightgreen"))
                     }
+                    .scrollContentBackground(.hidden)
                 }
+                  
+                
                 .navigationTitle("Classes")
                 .sheet(item: $selectedProject) { project in
                     ToDoListView(classes: project)
                 }
             }
+           
             
             Button(action: {showInput.toggle()}) {
                 Text(showInput ? "Cancel" : "Create Class")
@@ -162,44 +177,47 @@ struct ClassHome: View {
                 }
             }
         }
-        .onAppear {
-            loadClassList()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .init("ResetClassList"))) { _ in
-            classList = ["geometry", "english", "history"] // Reset to default classes
-            saveClassList()
-        }
     }
-    
-    func addClass() {
-        let trimmedName = newClass.trimmingCharacters(in: .whitespaces)
-        
-        // Check if class already exists
-        if !classList.contains(where: { $0.lowercased() == trimmedName.lowercased() }) {
-            classList.append(trimmedName)
-            saveClassList()
+            .onAppear {
+                loadClassList()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("ResetClassList"))) { _ in
+                classList = ["Sample Class"] // Reset to default classes
+                saveClassList()
+            }
         }
         
-        newClass = ""
-        showInput = false
-    }
-    
-    func loadClassList() {
-        if let decodedList = try? JSONDecoder().decode([String].self, from: classListData) {
-            classList = decodedList
-        } else {
-            // Set default classes if nothing is saved
-            classList = ["geometry", "english", "history"]
-            saveClassList()
+        func addClass() {
+            let trimmedName = newClass.trimmingCharacters(in: .whitespaces)
+            
+            // Check if class already exists
+            if !classList.contains(where: { $0.lowercased() == trimmedName.lowercased() }) {
+                classList.append(trimmedName)
+                saveClassList()
+            }
+            
+            newClass = ""
+            showInput = false
+        }
+        
+        func loadClassList() {
+            if let decodedList = try? JSONDecoder().decode([String].self, from: classListData) {
+                classList = decodedList
+            } else {
+                // Set default classes if nothing is saved
+                classList = ["Sample class"]
+                saveClassList()
+            }
+        }
+        
+        func saveClassList() {
+            if let encodedData = try? JSONEncoder().encode(classList) {
+                classListData = encodedData
+            }
+            
         }
     }
-    
-    func saveClassList() {
-        if let encodedData = try? JSONEncoder().encode(classList) {
-            classListData = encodedData
-        }
-    }
-}
+
 
 //DateFormatter for due date display
 private let dateFormatter: DateFormatter = {
