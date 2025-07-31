@@ -8,130 +8,182 @@
 import SwiftUI
 import SwiftData
 
-
-
-struct Todo: Identifiable {
-    let id = UUID()
-    var text: String
-    var isDone: Bool = false
+extension String: @retroactive Identifiable {
+    public var id: String { self }
 }
 
-struct ClassHome: View {
-    
-    @State var classes = ["English", "Algebra", "History", "Band", "PE"]
-    
-    // Track modal state per item string
-    @State private var sheetStates: [String: Bool] = [:]
-    
-    // Track to-do list per item string
-    @State private var todosByItem: [String: [Todo]] = [:]
-    
-    var body: some View {
-        ZStack{
-            Color(Color("vanilla"))
-                .edgesIgnoringSafeArea(.all)
-            VStack{
-                List(classes, id: \.self) { item in
-                    Button("• \(item)") {
-                        sheetStates[item] = true
-                        
-                        if todosByItem[item] == nil {
-                            todosByItem[item] = []
-                        }
-                    }
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .underline()
-                    .foregroundColor(Color(red: 0.13, green: 0.05, blue: 0.23)) // Dark purple
-                    .backgroundStyle(Color("vanilla"))
-                    
-                    .sheet(isPresented: Binding(
-                        get: { sheetStates[item] ?? false },
-                        set: { sheetStates[item] = $0 }
-                    )) {
-                        TodoListModalView(
-                            itemName: item,
-                            todos: Binding(
-                                get: { todosByItem[item] ?? [] },
-                                set: { todosByItem[item] = $0 }
-                            )
-                        )
-                    }
-                }
-            }
-            
-            .onAppear {
-                for item in classes {
-                    sheetStates[item] = false
-                    todosByItem[item] = []
-                }
-            }
-        }
-    }
-}
+//ToDoListView for a project (String)
 
-struct TodoListModalView: View {
-    let itemName: String
-    @Binding var todos: [Todo]
-    @Environment(\.dismiss) var dismiss
+struct ToDoListView: View {
     
-    @State private var newTodoText = ""
-    
+    @Environment(\.modelContext) var context
+    let classes: String
+
+    @Query var tasks: [Task]
+
+    @State var newTaskTitle = ""
+    @State var newTaskDueDate = Date()
+
+    init(classes: String) {
+        self.classes = classes
+        // Set up the query dynamically using the `filter:` initializer
+        _tasks = Query(filter: #Predicate<Task> { task in
+            task.className == classes
+        })}
+
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    TextField("New To-Do", text: $newTodoText)
+                VStack(spacing: 8) {
+                    TextField("New task...", text: $newTaskTitle)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                    Button(action: addTodo) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.title)
+
+                    DatePicker("Due Date", selection: $newTaskDueDate, displayedComponents: .date)
+                        .datePickerStyle(CompactDatePickerStyle())
+
+                    Button("Add Task") {
+                        addTask()
                     }
-                    .disabled(newTodoText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .disabled(newTaskTitle.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 .padding()
-                
+
                 List {
-                    ForEach($todos) {$todo in
+                    ForEach(tasks) { task in
                         HStack {
-                            Button(action: {
-                                todo.isDone.toggle()
-                            }) {
-                                Image(systemName: todo.isDone ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(todo.isDone ? .green : .gray)
+                            Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
+                                .foregroundColor(task.isDone ? .green : .gray)
+                                .onTapGesture {
+                                    toggleDone(task)
+                                }
+                            VStack(alignment: .leading) {
+                                Text(task.title)
+                                    .strikethrough(task.isDone)
+                                Text("Due: \(task.dueDate, formatter: dateFormatter)")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
                             }
-                            Text(todo.text)
-                                .strikethrough(todo.isDone)
                         }
                     }
-                    .onDelete(perform: deleteTodos)
+                    .onDelete(perform: deleteTasks)
                 }
             }
-            .navigationTitle("\(itemName)")
+            .navigationTitle(classes)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Dismiss") {
-                        dismiss()
-                    }
-                }
+                EditButton()
             }
         }
     }
-    
-    func addTodo() {
-        let trimmed = newTodoText.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        todos.append(Todo(text: trimmed))
-        newTodoText = ""
+
+    func addTask() {
+        let task = Task(title: newTaskTitle, dueDate: newTaskDueDate, className: classes)
+        context.insert(task)
+        try? context.save()
+        newTaskTitle = ""
+        newTaskDueDate = Date()
     }
-    
-    func deleteTodos(at offsets: IndexSet) {
-        todos.remove(atOffsets: offsets)
+
+    func toggleDone(_ task: Task) {
+        task.isDone.toggle()
+        try? context.save()
     }
+
+    func deleteTasks(at offsets: IndexSet) {
+        for index in offsets {
+            context.delete(tasks[index])
+        }
+        try? context.save()
+    }
+
 }
 
+//Main ContentView with String projects
 
+struct ClassHome: View {
+    @State var showInput = false
+    @State var classList = ["geometry", "english", "history"]
+  
+    @State var newClass = " "
+    @Environment(\.modelContext) var context
 
-#Preview{
-    ClassHome()
+    @Query var tasks: [Task]
+
+    @State var newTaskTitle = ""
+    @State var newTaskDueDate = Date()
+
+    
+    
+
+    @State private var selectedProject: String?
+
+    var body: some View {
+        VStack{
+            NavigationView {
+                List(classList, id: \.self) { course in
+                    Button {
+                        selectedProject = course
+                    } label: {
+                        Text(course)
+                    }
+                }
+                .navigationTitle("Classes")
+                .sheet(item: $selectedProject) { project in
+                    ToDoListView(classes: project)
+                }
+                
+            }
+            Button(action: {showInput.toggle()}) {
+                Text(showInput ? "Cancel" : "Create Class")
+                    .fontWeight(.semibold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                    .foregroundColor(.black)
+                    .cornerRadius(20)
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+            
+            if showInput {
+                VStack(spacing: 10){
+                    TextField("Enter class name...", text: $newClass)
+                        .foregroundStyle(.black)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                    Button("Submit (Enter class name ↑)"){if !newClass.isEmpty{
+                        classList.append(newClass)
+                        newClass = " "
+                        showInput = false}
+                    }
+                    .fontWeight(.semibold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(red: 0.56, green: 0.55, blue: 0.75)) // Muted purple
+                    .foregroundColor(.black)
+                    .cornerRadius(20)
+                    .padding()
+                    .cornerRadius(8)
+
+                }
+            }
+        }
+        }
+        
+}
+
+//DateFormatter for due date display
+
+private let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    return formatter
+}()
+
+//Preview
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ClassHome()
+            .modelContainer(for: Task.self, inMemory: true)
+    }
 }

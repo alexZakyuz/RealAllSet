@@ -19,6 +19,11 @@ struct RealAllSetApp: App {
             
         }//windowgroup
         .modelContainer(for: User.self)
+        //classhome stuff
+        WindowGroup {
+            ClassHome()
+        }
+        .modelContainer(for: Task.self)
 
     }//body
     
