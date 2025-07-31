@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct CalendarView: View {
     @State private var selectedDate: Date? = nil
@@ -13,6 +14,13 @@ struct CalendarView: View {
     @State private var currentMonth: Date = Date()
     @State private var showAlert = false
     @State private var alertMessage = ""
+    
+    var notesBinding: Binding<[String: String]> {
+        Binding(
+            get: { notes },
+            set: { notes = $0 }
+        )
+    }
 
     private var daysInMonth: [Date] {
         generateCalendar(for: currentMonth)
@@ -131,6 +139,10 @@ struct CalendarView: View {
             .padding(.top)
             .onAppear {
                 loadNotes()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .init("ResetCalendarNotes"))) { _ in
+                notes.removeAll()
+                selectedDate = nil // Also clear selected date
             }
             .alert("Note", isPresented: $showAlert) {
                 Button("OK", role: .cancel) {}

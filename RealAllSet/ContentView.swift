@@ -14,8 +14,11 @@ struct ContentView: View {
     @Query private var users: [User]
     let userName: String
 
-    @AppStorage("isDarkMode") private var isDarkMode = false
+    @State private var isDarkMode = false
+    
     @State private var showSettings = false
+    
+    @State private var calendarNotes: [String: String] = [:]
 
     var body: some View {
         NavigationStack {
@@ -122,7 +125,10 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                NavigationView {
+                    SettingsView(isDarkMode: $isDarkMode)
+                }//navview
+                .preferredColorScheme(isDarkMode ? .dark : .light)
             }
         }
         .preferredColorScheme(isDarkMode ? .dark : .light)

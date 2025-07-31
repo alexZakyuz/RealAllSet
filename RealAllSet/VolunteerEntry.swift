@@ -5,6 +5,7 @@
 //  Created by Scholar on 7/30/25.
 //
 import SwiftUI
+import Foundation
 
 // MARK: - Error Handling Models
 enum VolunteerLogError: LocalizedError {
