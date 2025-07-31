@@ -23,12 +23,13 @@ class Task {
     }
 }
 
-class Class {
+@Model
+class Class: Identifiable {
     var className: String
-
     init(className: String) {
         self.className = className
     }
+
 }
 
 

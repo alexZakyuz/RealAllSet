@@ -18,8 +18,10 @@ struct RealAllSetApp: App {
             RootView()
             
         }//windowgroup
-        .modelContainer(for: [User.self, Task.self])
-
+        WindowGroup {
+                    ClassHome()
+                }
+                .modelContainer(for: [Class.self, Task.self])
     }//body
     
 }//struct
