@@ -134,6 +134,21 @@ struct SettingsView: View {
         
         // Reset class list to default
         NotificationCenter.default.post(name: .init("ResetClassList"), object: nil)
+        
+        // Delete the user from SwiftData to return to LoginView
+        do {
+            let fetchDescriptor = FetchDescriptor<User>()
+            let allUsers = try context.fetch(fetchDescriptor)
+            for user in allUsers {
+                context.delete(user)
+            }
+            try context.save()
+            
+            // Dismiss the settings view since we're going back to login
+            dismiss()
+        } catch {
+            print("Failed to delete user: \(error)")
+        }
     }//func
     
 }//struct
