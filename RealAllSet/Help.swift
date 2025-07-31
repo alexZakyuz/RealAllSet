@@ -9,154 +9,95 @@ import SwiftUI
 
 struct Help: View {
     var body: some View {
-        //NavigationStack{
-        ZStack{
-            Color("vanilla")
+        ZStack {
+            Color("vanilla") // Full background color
                 .ignoresSafeArea()
-            VStack {
-                Text("Guides and Tips")
-                    .font(.largeTitle)
-                    .fontWeight(.heavy)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .background(Color("lightgreen")
-                    )
-                    .cornerRadius(19)
-                    .padding()
-                Spacer()
-                
-                HStack {
+            
+            ScrollView {
+                VStack(spacing: 24) {
                     
-                    VStack{
-                        
-                        
-                        Text("Organizing")
-                            .font(.title)
+                    Text("Guides and Tips")
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                        .padding()
+                        .background(Color("beigebrown"))
+                        .cornerRadius(19)
+                        .foregroundColor(.white)
+                    
+                    VStack(spacing: 16) {
+                        // Organizing Box
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Organizing")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .padding(.horizontal)
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("• Choose your area of focus")
+                                Text("• Use a to-do list")
+                                Text("• Set goals")
+                                Text("• Clean up physical clutter")
+                                Text("• Maintain a calendar to keep track")
+                            }
+                            .font(.callout)
                             .fontWeight(.bold)
-                            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                        
-                        
-                        VStack(alignment: .leading) {
-
-                            Text("• Choose your area of focus")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Use a to-do list")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Set goals")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Clean up physical clutter")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Maintain a calender")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            
-                            
+                            .padding(.horizontal)
                         }
-                      //  .padding()
+                        .padding(.vertical)
+                        .background(Color("lightgreen"))
+                        .cornerRadius(19)
+                        .frame(maxWidth: .infinity)
                         
-                        Spacer()
-                    }
-                    .frame(width: 180, height: 500)
-                    .background(Color("beigebrown"))
-                    .cornerRadius(19)
-                    .padding(.leading, 50.0)
-                    Spacer()
-                    
-                    
-                    
-                    VStack {
-                        
-                        Text("Unwind")
-                            .font(.title)
+                        // Unwind Box
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Unwind")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .padding(.horizontal)
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("• Try to get enough sleep")
+                                Text("• Pick a person you trust")
+                                Text("• Establish small rituals")
+                                Text("• Find a physical activity")
+                                Text("• Recognize when you are stressed")
+                            }
+                            .font(.callout)
                             .fontWeight(.bold)
-                            .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                        
-                        VStack(alignment: .leading) {
-                            Text("• Try to get enough sleep")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Pick a person you trust")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Establish small rituals")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Find a physical activity")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            Text("• Recgonize when you are stressed")
-                                .font(.callout)
-                                .fontWeight(.bold)
-                                .padding()
-                            
-                            
+                            .padding(.horizontal)
                         }
-                        //.padding()
-                        
-                        Spacer()
+                        .padding(.vertical)
+                        .background(Color("lightgreen"))
+                        .cornerRadius(19)
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(width: 180, height: 500)
-
-                    .background(Color("beigebrown"))
-                    .cornerRadius(19)
-                    .padding(.trailing, 50.0)
                     
-                }//hsyack
-                
-                Spacer()
-                
-                VStack {
-                    Text ("Sources")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("vanilla"))
-                        .multilineTextAlignment(.center)
-                        .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                    VStack (alignment: .leading){
+                    // Sources Box
+                    VStack(spacing: 12) {
+                        Text("Sources")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("vanilla"))
                         
-                        Text("placeholder")
+                        Link("How to be more organized", destination: URL(string:"https://www.verywellmind.com/how-to-be-more-organized-6541406")!)
+                            .foregroundColor(Color("vanilla"))
+                        Link("8 ways to lower stress in highschool", destination: URL(string:"https://jedfoundation.org/resource/8-ways-to-lower-stress-in-high-school/")!)
                             .foregroundColor(Color("vanilla"))
                     }
-                 
-                    
-                    
-                    
-                    
-                        
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 140)
+                    .background(Color("darkgreen"))
+                    .cornerRadius(19)
                 }
-                .frame(width: 400, height: 150)
-                .background(Color("darkgreen"))
-                .cornerRadius(19)
                 .padding()
-                Spacer()
-                    
-                    
-            }//dodohe
-            .padding()
-            
-            
-            //}
-            
-            
-            
-            
-            
-        }//body
-    }//struct
+            }
+        }
+    }
 }
+
 #Preview {
     Help()
 }
