@@ -101,22 +101,17 @@ struct ToDoListView: View {
 
 struct ClassHome: View {
     @State var showInput = false
-    @State var classList = ["geometry", "english", "history"]
-  
+    @State var classList = ["Sample Class"]
     @State var newClass = " "
     @Environment(\.modelContext) var context
-
     @Query var tasks: [Task]
-
     @State var newTaskTitle = ""
     @State var newTaskDueDate = Date()
-
-    
-    
-
     @State private var selectedProject: String?
 
     var body: some View {
+        ZStack{
+            Color("vanilla")
         VStack{
             NavigationView {
                 List(classList, id: \.self) { course in
@@ -163,6 +158,7 @@ struct ClassHome: View {
                     .cornerRadius(20)
                     .padding()
                     .cornerRadius(8)
+                }
 
                 }
             }
