@@ -37,6 +37,7 @@ struct VolunteerEntry: Identifiable, Codable {
 }
 
 struct VolunteerLogView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var entries: [VolunteerEntry] = []
     @State private var showingAddSheet = false
     @State private var showingGoalSheet = false
@@ -79,11 +80,11 @@ struct VolunteerLogView: View {
                             .foregroundColor(.primary)
                         
                         Button(action: {
-                            newGoalText = String(Double(goalHours))
+                            newGoalText = String(goalHours > 0 ? goalHours : 100)
                             showingGoalSheet = true
                         }) {
                             HStack {
-                                Text("\(Double(goalHours)) hours")
+                                Text(goalHours > 0 ? "\(goalHours, specifier: "%.0f") hours" : "Set Goal")
                                     .font(.title2)
                                     .fontWeight(.semibold)
                                 Image(systemName: "pencil")
@@ -136,19 +137,52 @@ struct VolunteerLogView: View {
                     }
 
                     // RESTORED: Light green background around progress ring
-                    ProgressRing(progress: progress, goalHours: goalHours, totalHours: totalHours)
+                    if goalHours > 0 {
+                        ProgressRing(progress: progress, goalHours: goalHours, totalHours: totalHours)
+                            .padding()
+                            .background(Color("lightgreen"))
+                            .cornerRadius(20)
+                            .padding(.horizontal)
+                    } else {
+                        VStack(spacing: 12) {
+                            Image(systemName: "target")
+                                .font(.system(size: 40))
+                                .foregroundColor(Color("darkgreen"))
+                            Text("Set a volunteer goal to track your progress!")
+                                .font(.headline)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.primary)
+                            Text("Total Hours: \(totalHours, specifier: "%.1f")")
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("darkgreen"))
+                        }
                         .padding()
                         .background(Color("lightgreen"))
                         .cornerRadius(20)
                         .padding(.horizontal)
+                    }
                 }
                 .padding(.horizontal)
             }
             .navigationTitle("Volunteer Log")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 17, weight: .medium))
+                            Text("Back")
+                                .font(.system(size: 17))
+                        }
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddSheet = true }) {
                         Image(systemName: "plus")
+                            .font(.system(size: 17, weight: .medium))
                     }
                 }
             }
@@ -173,6 +207,7 @@ struct VolunteerLogView: View {
             }
         }
         .navigationViewStyle(.stack) // FIXED: Consistent navigation style
+        .navigationBarBackButtonHidden(true)
     }
     
     // MARK: - Add Entry Sheet with Error Handling
@@ -239,7 +274,7 @@ struct VolunteerLogView: View {
                             .keyboardType(.numberPad)
                             .textFieldStyle(.roundedBorder)
                         
-                        Text("Current goal: \(Double(goalHours)) hours")
+                        Text("Current goal: \(goalHours > 0 ? "\(goalHours, specifier: "%.0f")" : "No goal set") hours")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -410,11 +445,11 @@ struct ProgressRing: View {
                 .animation(.easeOut(duration: 1.0), value: progress)
 
             VStack(spacing: 4) {
-                Text("\(Double(progress) * 100)%")
-                    .font(.title)
+                Text("\(progress * 100, specifier: "%.0f")%")
+                    .font(.largeTitle)
                     .fontWeight(.bold)
-                Text("\(Int(totalHours))/\(Double(goalHours)) hrs")
-                    .font(.caption)
+                Text("\(totalHours, specifier: "%.0f")/\(goalHours, specifier: "%.0f") hrs")
+                    .font(.footnote)
                     .foregroundColor(.secondary)
             }
         }
