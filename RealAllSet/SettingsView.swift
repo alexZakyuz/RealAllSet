@@ -76,7 +76,7 @@ struct SettingsView: View {
                 
             }//form
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {

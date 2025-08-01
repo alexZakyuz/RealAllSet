@@ -48,7 +48,7 @@ struct VolunteerLogView: View {
     @State private var newNotes = ""
     
     // Goal setting
-    @State private var goalHours = 0
+    @State private var goalHours: Double = 0
     @State private var newGoalText = ""
     
     // Error handling states
@@ -79,11 +79,11 @@ struct VolunteerLogView: View {
                             .foregroundColor(.primary)
                         
                         Button(action: {
-                            newGoalText = String(Int(goalHours))
+                            newGoalText = String(Double(goalHours))
                             showingGoalSheet = true
                         }) {
                             HStack {
-                                Text("\(Int(goalHours)) hours")
+                                Text("\(Double(goalHours)) hours")
                                     .font(.title2)
                                     .fontWeight(.semibold)
                                 Image(systemName: "pencil")
@@ -239,7 +239,7 @@ struct VolunteerLogView: View {
                             .keyboardType(.numberPad)
                             .textFieldStyle(.roundedBorder)
                         
-                        Text("Current goal: \(Int(goalHours)) hours")
+                        Text("Current goal: \(Double(goalHours)) hours")
                             .font(.caption)
                             .foregroundColor(.gray)
                     }
@@ -413,7 +413,7 @@ struct ProgressRing: View {
                 Text("\(Int(progress * 100))%")
                     .font(.title)
                     .fontWeight(.bold)
-                Text("\(Int(totalHours))/\(Int(goalHours)) hrs")
+                Text("\(Int(totalHours))/\(Double(goalHours)) hrs")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
