@@ -243,6 +243,6 @@ struct QuickAccessCard: View {
 }
 
 #Preview {
-    ContentView(userName: "Geethika")
+    ContentView(userName: "Test User")
         .modelContainer(for: User.self, inMemory: true)
 }

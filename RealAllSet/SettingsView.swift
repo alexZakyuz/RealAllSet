@@ -17,10 +17,13 @@ struct SettingsView: View {
     
     @Query private var users: [User]
     
-    @State private var userName: String = "User"
     @State private var showingNameEdit = false
     @State private var showingResetAlert = false
     @State private var tempUserName: String = ""
+    
+    private var userName: String {
+        users.first?.name ?? "User"
+    }
     
     var body: some View {
         
@@ -76,7 +79,7 @@ struct SettingsView: View {
                 
             }//form
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
@@ -88,9 +91,7 @@ struct SettingsView: View {
                 TextField("Enter your name", text: $tempUserName)
                 Button("Cancel", role: .cancel) { }
                 Button("Save") {
-                    if !tempUserName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                        userName = tempUserName.trimmingCharacters(in: .whitespacesAndNewlines)
-                    }//if statement
+                    updateUserName()
                 }//button
             } message: {
                 Text("Enter your display name")
@@ -108,9 +109,31 @@ struct SettingsView: View {
         
     }//body
     
+    private func updateUserName() {
+        
+        let trimmedName = tempUserName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        if let user = users.first {
+            
+            user.name = trimmedName
+            
+            do {
+                
+                try context.save()
+                
+            } catch {
+                
+                print("Failed to update user name: \(error)")
+                
+            }//do
+            
+        }//if statement
+        
+    }//func
+    
     private func resetAllSettings() {
         isDarkMode = false
-        userName = "User"
         
         //delete calendar notes
         UserDefaults.standard.removeObject(forKey: "savedNotes")
@@ -119,6 +142,9 @@ struct SettingsView: View {
         // Clear volunteer entries
         UserDefaults.standard.removeObject(forKey: "volunteerEntries")
         NotificationCenter.default.post(name: .init("ResetVolunteerEntries"), object: nil)
+        
+        //Clear volunteer goal
+        UserDefaults.standard.removeObject(forKey: "volunteerGoal")
         
         // Clear all SwiftData tasks from database
         do {
@@ -131,6 +157,21 @@ struct SettingsView: View {
         } catch {
             print("Failed to delete tasks: \(error)")
         }
+        
+        // Clear all SwiftData courses from database (if any exist)
+        do {
+            let fetchDescriptor = FetchDescriptor<Course>()
+            let allCourses = try context.fetch(fetchDescriptor)
+            for course in allCourses {
+                context.delete(course)
+            }
+            try context.save()
+        } catch {
+            print("Failed to delete courses: \(error)")
+        }
+        
+        // Clear class list from AppStorage directly
+        UserDefaults.standard.removeObject(forKey: "classList")
         
         // Reset class list to default
         NotificationCenter.default.post(name: .init("ResetClassList"), object: nil)
