@@ -410,7 +410,7 @@ struct ProgressRing: View {
                 .animation(.easeOut(duration: 1.0), value: progress)
 
             VStack(spacing: 4) {
-                Text("\(Int(progress * 100))%")
+                Text("\(Double(progress) * 100)%")
                     .font(.title)
                     .fontWeight(.bold)
                 Text("\(Int(totalHours))/\(Double(goalHours)) hrs")
